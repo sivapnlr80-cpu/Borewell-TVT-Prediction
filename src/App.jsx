@@ -243,10 +243,10 @@ export default function App() {
       </header>
 
       {/* Main Workspace Split-Screen */}
-      <main className="flex-1 max-w-[1650px] w-full mx-auto p-6 flex flex-col lg:flex-row gap-8 overflow-hidden print:p-0 print:m-0 print:block justify-center">
+      <main className="flex-1 w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-8 overflow-hidden print:p-0 print:m-0 print:block box-border h-[calc(100vh-100px)]">
         
-        {/* Left Panel: Input & Controls (Centrally framed to minimize cognitive load) */}
-        <section className="w-full lg:w-[45%] xl:w-[40%] flex flex-col gap-6 overflow-auto pr-1 pb-4 scrollbar-thin print:hidden max-w-xl mx-auto lg:mx-0">
+        {/* Left Panel: Input & Controls (Editor Column) */}
+        <section className="editor-container w-full h-full flex flex-col gap-6 overflow-auto pr-1 pb-4 scrollbar-thin print:hidden box-border">
           
           {/* Reference Upload Box */}
           <div className="glass-panel border-vibgyor rounded-xl p-5 glow-card space-y-3">
@@ -294,8 +294,8 @@ export default function App() {
           
         </section>
 
-        {/* Right Panel: A4 Preview Screen */}
-        <section className="flex-1 glass-panel rounded-xl overflow-hidden glow-card flex flex-col print:border-none print:shadow-none print:bg-white print:p-0 print:m-0 print:block">
+        {/* Right Panel: Preview Column */}
+        <section className="preview-container w-full h-full glass-panel rounded-xl overflow-hidden glow-card flex flex-col print:border-none print:shadow-none print:bg-white print:p-0 print:m-0 print:block box-border">
           <DocumentPreview
             htmlContent={generatedDocument}
             onContentChange={setGeneratedDocument}
