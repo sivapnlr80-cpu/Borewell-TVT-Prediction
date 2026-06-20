@@ -139,7 +139,7 @@ export default function SettingsModal({ isOpen, onClose, onSave, currentSettings
                 {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
-            <p className="mt-1.5 text-xxs text-zinc-555 flex items-center gap-1">
+            <p className="mt-1.5 text-xxs text-zinc-500 flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
               Keys are stored locally in your browser's local storage and never sent elsewhere.
             </p>

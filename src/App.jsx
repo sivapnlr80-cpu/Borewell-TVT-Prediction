@@ -184,13 +184,14 @@ export default function App() {
       setIsLoading(false);
     }
   };
-
   const handleSaveSettings = (newSettings) => {
     setSettings(newSettings);
     localStorage.setItem('app_llm_settings', JSON.stringify(newSettings));
     showToast('AI Settings updated successfully!', 'success');
-  };  return (
-    <div className="min-h-screen bg-transparent flex flex-col transition-colors duration-300 font-plus text-zinc-350">
+  };
+
+  return (
+    <div className="min-h-screen bg-transparent flex flex-col transition-colors duration-300 font-plus text-zinc-400">
       
       {/* Header Row */}
       <header className="glass-panel border-b border-white/5 px-6 py-4 shrink-0 shadow-lg print:hidden sticky top-0 z-40">
@@ -207,6 +208,7 @@ export default function App() {
             </div>
           </div>
           
+          <div className="flex items-center gap-2">
             {/* API key warning indicator */}
             {!settings.apiKey && (
               <button 
@@ -224,7 +226,7 @@ export default function App() {
               className="p-2 rounded-lg border border-zinc-800 text-zinc-400 hover:bg-zinc-900/50 hover:border-cyan-500/30 hover:text-cyan-400 transition-all cursor-pointer"
               aria-label="Toggle Dark Mode"
             >
-              {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-zinc-450" />}
+              {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-zinc-400" />}
             </button>
 
             {/* Settings Trigger */}
@@ -241,10 +243,10 @@ export default function App() {
       </header>
 
       {/* Main Workspace Split-Screen */}
-      <main className="flex-1 max-w-[1600px] w-full mx-auto p-6 flex flex-col md:flex-row gap-6 overflow-hidden print:p-0 print:m-0 print:block">
+      <main className="flex-1 max-w-[1650px] w-full mx-auto p-6 flex flex-col lg:flex-row gap-8 overflow-hidden print:p-0 print:m-0 print:block justify-center">
         
-        {/* Left Panel: Input & Controls */}
-        <section className="w-full md:w-[45%] flex flex-col gap-5 overflow-auto pr-1 pb-4 scrollbar-thin print:hidden">
+        {/* Left Panel: Input & Controls (Centrally framed to minimize cognitive load) */}
+        <section className="w-full lg:w-[45%] xl:w-[40%] flex flex-col gap-6 overflow-auto pr-1 pb-4 scrollbar-thin print:hidden max-w-xl mx-auto lg:mx-0">
           
           {/* Reference Upload Box */}
           <div className="glass-panel border-vibgyor rounded-xl p-5 glow-card space-y-3">

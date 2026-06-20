@@ -85,7 +85,7 @@ export default function ReferenceUpload({ onUploadSuccess, onError, currentRefer
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center space-y-2 py-1">
-            <Upload className="w-8 h-8 text-zinc-550" />
+            <Upload className="w-8 h-8 text-zinc-500" />
             <p className="text-sm font-semibold text-zinc-300">Upload reference style file</p>
             <p className="text-xs text-zinc-500">Drag & drop or browse .pdf / .docx files</p>
           </div>

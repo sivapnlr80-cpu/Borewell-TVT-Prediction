@@ -11,11 +11,17 @@
 @layer base {
   body {
     font-family: var(--font-plus);
-    @apply antialiased text-zinc-400 bg-[#08090d] transition-colors duration-300;
+    @apply antialiased text-zinc-400 bg-[#090a0f] transition-colors duration-300;
+    /* CSS Mesh Gradient with radial and linear-gradient overlays */
     background-image: 
-      radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 60%),
-      radial-gradient(circle at 15% 30%, rgba(217, 119, 6, 0.03) 0%, transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
+      linear-gradient(135deg, rgba(9, 10, 15, 0.98), rgba(17, 24, 39, 0.97)),
+      radial-gradient(circle at 0% 0%, rgba(6, 182, 212, 0.18) 0%, transparent 45%),
+      radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.15) 0%, transparent 45%),
+      radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(217, 119, 6, 0.06) 0%, transparent 60%);
+    background-blend-mode: normal, screen, screen, screen, screen, screen, screen;
     background-attachment: fixed;
   }
 }
@@ -37,13 +43,13 @@
   background: rgba(6, 182, 212, 0.3);
 }
 
-/* Glassmorphic Panel Design System */
+/* Glassmorphic Panel Design System - Glossy Minimalist */
 .glass-panel {
-  background: rgba(10, 10, 14, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
 }
 
 .glow-card {
@@ -51,70 +57,86 @@
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .glow-card:hover {
-  border-color: rgba(6, 182, 212, 0.25);
-  box-shadow: 0 0 25px rgba(6, 182, 212, 0.05);
+  border-color: rgba(6, 182, 212, 0.35) !important;
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.08) !important;
 }
 
 /* Cyber Elements */
 .cyber-input {
   background: #ffffff !important;
-  border: 1px solid #d1d5db !important;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 12px !important;
   color: #0f172a !important;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 .cyber-input:focus {
   outline: none;
-  border-color: rgba(6, 182, 212, 0.8) !important;
-  box-shadow: 0 0 12px rgba(6, 182, 212, 0.25) !important;
+  border-color: #06b6d4 !important;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2), 0 0 20px rgba(6, 182, 212, 0.6) !important;
   background: #ffffff !important;
 }
 
 .cyber-button-primary {
-  background: linear-gradient(135deg, #0284c7 0%, #0891b2 100%);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  border: 1px solid rgba(6, 182, 212, 0.3);
   color: white;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease !important;
 }
 .cyber-button-primary:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
-  border-color: rgba(6, 182, 212, 0.5);
+  transform: scale(1.05) !important;
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
+  border-color: rgba(6, 182, 212, 0.7);
 }
 .cyber-button-primary:active:not(:disabled) {
-  transform: translateY(0);
+  transform: scale(1.01) !important;
 }
+
 .cyber-button-secondary {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.06);
   color: #e4e4e7;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease !important;
 }
 .cyber-button-secondary:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.15);
   color: white;
+  transform: scale(1.05) !important;
 }
 
-/* Glossy Navy Blue Button */
+/* Glossy Navy Blue Button - with high-saturation gradient & hover scale */
 .glossy-navy-blue {
-  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 
-              0 4px 15px rgba(15, 23, 42, 0.4);
+  background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 
+              0 4px 15px rgba(6, 182, 212, 0.2);
   color: #f1f5f9;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease !important;
 }
 .glossy-navy-blue:hover:not(:disabled) {
-  background: linear-gradient(180deg, #2d3d52 0%, #152033 100%);
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 
-              0 0 15px rgba(30, 41, 59, 0.5);
+  background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+  border-color: rgba(6, 182, 212, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 
+              0 0 25px rgba(6, 182, 212, 0.5);
   color: white;
+  transform: scale(1.05) !important;
 }
 .glossy-navy-blue:active:not(:disabled) {
-  transform: scale(0.985);
+  transform: scale(1.01) !important;
+}
+
+/* Chat Red Submit Button */
+.btn-red-submit {
+  background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%) !important;
+  color: white !important;
+  border: 1px solid rgba(244, 63, 94, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+.btn-red-submit:hover:not(:disabled) {
+  transform: scale(1.05) !important;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.5) !important;
+  background: linear-gradient(135deg, #ff4d6d 0%, #e01e5a 100%) !important;
 }
 
 /* VIBGYOR Border Gradient */

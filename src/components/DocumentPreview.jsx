@@ -200,7 +200,7 @@ export default function DocumentPreview({ htmlContent, onContentChange, docType,
             </div>
             <div>
               <h4 className="text-sm font-bold font-space tracking-wider text-cyan-400 uppercase">No Document Drafted Yet</h4>
-              <p className="text-xs text-zinc-555 mt-1">
+              <p className="text-xs text-zinc-500 mt-1">
                 Upload a style reference, enter the required metadata, describe your situation, and click "Generate" to see the preview.
               </p>
             </div>

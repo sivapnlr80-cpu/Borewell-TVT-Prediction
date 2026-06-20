@@ -87,7 +87,7 @@ export default function ChatPanel({
 
                 {/* User Icon */}
                 {isUser && (
-                  <div className="w-6 h-6 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-650 border border-zinc-200 shrink-0 mt-0.5">
+                  <div className="w-6 h-6 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 border border-zinc-200 shrink-0 mt-0.5">
                     <User className="w-3.5 h-3.5" />
                   </div>
                 )}
@@ -100,13 +100,13 @@ export default function ChatPanel({
       {/* Quick Suggestions */}
       {hasDraft && !isLoading && (
         <div className="px-4 py-2 border-t border-white/5 bg-[#08080a]/50 shrink-0">
-          <p className="text-[10px] font-semibold text-zinc-550 mb-1.5 uppercase tracking-wider">Suggestions</p>
+          <p className="text-[10px] font-semibold text-zinc-500 mb-1.5 uppercase tracking-wider">Suggestions</p>
           <div className="flex flex-wrap gap-1.5">
             {suggestions.map((suggestion, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSuggestionClick(suggestion)}
-                className="text-[10px] font-medium bg-[#08080a] border border-zinc-800 rounded-full px-2.5 py-1 text-zinc-450 hover:border-cyan-500/50 hover:text-cyan-400 hover:bg-cyan-500/5 transition-all cursor-pointer"
+                className="text-[10px] font-medium bg-[#08080a] border border-zinc-800 rounded-full px-2.5 py-1 text-zinc-400 hover:border-cyan-500/50 hover:text-cyan-400 hover:bg-cyan-500/5 transition-all cursor-pointer"
               >
                 {suggestion}
               </button>
@@ -135,16 +135,16 @@ export default function ChatPanel({
             }
             className="w-full cyber-input pl-3 pr-10 py-2 text-xs focus:ring-2 focus:ring-cyan-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           />
-          <span className="absolute inset-y-0 right-3 flex items-center text-zinc-555 select-none hidden md:flex">
+          <span className="absolute inset-y-0 right-3 flex items-center text-zinc-500 select-none hidden md:flex">
             <CornerDownLeft className="w-3.5 h-3.5" />
           </span>
         </div>
         <button
           type="submit"
           disabled={!input.trim() || !hasDraft || isLoading}
-          className={`p-2 rounded-lg text-white transition-all shrink-0 ${
+          className={`p-2 rounded-lg transition-all shrink-0 ${
             input.trim() && hasDraft && !isLoading
-              ? 'bg-rose-600 hover:bg-rose-700 cursor-pointer shadow-sm hover:shadow-rose-600/30'
+              ? 'btn-red-submit cursor-pointer'
               : 'bg-zinc-900/40 border border-white/5 text-zinc-700 cursor-not-allowed'
           }`}
           aria-label="Send refinement request"
