@@ -174,12 +174,12 @@ export default function DocumentPreview({ htmlContent, onContentChange, docType,
       </div>
 
       {/* Main Preview Container */}
-      <div className="flex-1 bg-[#040406] hologram-grid p-0 flex flex-col box-border">
+      <div className="flex-1 overflow-auto bg-[#040406] hologram-grid p-4 flex flex-col h-[calc(100vh-150px)] scrollbar-thin box-border">
         {htmlContent ? (
           /* A4 Sheet Simulation container */
           <div
             id="document-preview-container"
-            className="a4-page animate-fade-in text-black w-full flex flex-col box-border"
+            className="a4-page animate-fade-in text-black flex flex-col box-border"
           >
             {/* The editable canvas area */}
             <div 

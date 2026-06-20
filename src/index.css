@@ -183,11 +183,12 @@
 
 /* A4 Page Simulation for screen rendering - Futuristic Minimalist */
 .a4-page {
-  width: 100% !important;
+  width: 210mm !important;
+  min-width: 210mm !important;
   height: 300vh !important;
   max-height: 300vh !important;
   padding: 40px 40px 40px 50px; /* Generous responsive margins */
-  margin: 0 !important;
+  margin: 0 auto !important;
   background: #ffffff !important; /* Document preview paper is always white */
   color: #0f0f11 !important; /* Document preview text is always black/dark */
   box-sizing: border-box;
