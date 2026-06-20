@@ -174,12 +174,12 @@ export default function DocumentPreview({ htmlContent, onContentChange, docType,
       </div>
 
       {/* Main Preview Container */}
-      <div className="flex-1 overflow-hidden bg-[#040406] hologram-grid p-6 flex justify-center items-center">
+      <div className="flex-1 overflow-hidden bg-[#040406] hologram-grid p-4 flex flex-col h-full">
         {htmlContent ? (
           /* A4 Sheet Simulation container */
           <div
             id="document-preview-container"
-            className="a4-page animate-fade-in text-black"
+            className="a4-page animate-fade-in text-black flex-1 w-full h-full flex flex-col overflow-hidden"
           >
             {/* The editable canvas area */}
             <div 
@@ -187,7 +187,7 @@ export default function DocumentPreview({ htmlContent, onContentChange, docType,
               contentEditable={true}
               suppressContentEditableWarning={true}
               onInput={handleInput}
-              className={`a4-content leading-relaxed text-justify w-full focus:outline-none min-h-[250mm] w-full cursor-text ${
+              className={`a4-content leading-relaxed text-justify w-full focus:outline-none w-full cursor-text ${
                 draftingLanguage === 'Telugu' ? 'font-telugu' : 'font-english'
               }`}
               title="Click anywhere to edit this official document draft directly."
