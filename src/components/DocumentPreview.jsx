@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { 
   Printer, 
   FileDown, 
@@ -13,7 +13,9 @@ import {
   AlignRight,
   AlignJustify,
   List,
-  ListOrdered
+  ListOrdered,
+  ZoomIn,
+  ZoomOut
 } from 'lucide-react';
 import { exportToDoc } from '../utils/docxExporter';
 
@@ -23,6 +25,15 @@ import { exportToDoc } from '../utils/docxExporter';
  */
 export default function DocumentPreview({ htmlContent, onContentChange, docType, toneMode, draftingLanguage }) {
   const editorRef = useRef(null);
+  const [zoom, setZoom] = useState(1.0);
+
+  const handleZoomIn = () => {
+    setZoom(prev => Math.min(prev + 0.1, 2.0));
+  };
+
+  const handleZoomOut = () => {
+    setZoom(prev => Math.max(prev - 0.1, 0.5));
+  };
 
   // Sync external changes (e.g. initial LLM generation or chat refinement)
   // but avoid updating innerHTML while the user is actively typing.
@@ -71,7 +82,30 @@ export default function DocumentPreview({ htmlContent, onContentChange, docType,
           </div>
           
           {htmlContent && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              {/* Page Magnifier (Zoom Controls) */}
+              <div className="flex items-center gap-1.5 bg-[#08080a] border border-white/10 rounded-lg p-0.5 px-1.5 select-none">
+                <button
+                  onClick={handleZoomOut}
+                  disabled={zoom <= 0.5}
+                  className="p-1 rounded text-zinc-400 hover:text-cyan-400 hover:bg-white/5 disabled:opacity-30 disabled:hover:text-zinc-400 disabled:hover:bg-transparent transition-colors cursor-pointer"
+                  title="Zoom Out"
+                >
+                  <ZoomOut className="w-3.5 h-3.5" />
+                </button>
+                <span className="text-[10px] font-bold text-zinc-300 font-space min-w-[36px] text-center">
+                  {Math.round(zoom * 100)}%
+                </span>
+                <button
+                  onClick={handleZoomIn}
+                  disabled={zoom >= 2.0}
+                  className="p-1 rounded text-zinc-400 hover:text-cyan-400 hover:bg-white/5 disabled:opacity-30 disabled:hover:text-zinc-400 disabled:hover:bg-transparent transition-colors cursor-pointer"
+                  title="Zoom In"
+                >
+                  <ZoomIn className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
               <button
                 onClick={handleWordExport}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium cyber-button-secondary rounded-lg transition-colors cursor-pointer"
@@ -180,6 +214,7 @@ export default function DocumentPreview({ htmlContent, onContentChange, docType,
           <div
             id="document-preview-container"
             className="a4-page animate-fade-in text-black flex flex-col box-border"
+            style={{ zoom }}
           >
             {/* The editable canvas area */}
             <div 
