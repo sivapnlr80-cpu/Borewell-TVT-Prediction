@@ -188,8 +188,8 @@
 /* A4 Page Simulation for screen rendering - Futuristic Minimalist */
 .a4-page {
   width: 100% !important;
-  height: 100% !important;
-  max-height: 100% !important;
+  height: 300vh !important;
+  max-height: 300vh !important;
   padding: 40px 40px 40px 50px; /* Generous responsive margins */
   margin: 0 !important;
   background: #ffffff !important; /* Document preview paper is always white */
@@ -202,7 +202,7 @@
   transition: all 0.3s ease;
   display: flex !important;
   flex-direction: column !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   transform: none !important;
 }
 
@@ -223,7 +223,7 @@
   line-height: 1.65;
   letter-spacing: 0.1px;
   flex: 1 !important;
-  overflow-y: auto !important;
+  overflow: visible !important;
   padding-right: 4px;
 }
 
