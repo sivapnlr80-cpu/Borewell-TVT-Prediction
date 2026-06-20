@@ -191,7 +191,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent flex flex-col transition-colors duration-300 font-plus text-zinc-400">
+    <div className="h-screen max-h-screen overflow-hidden bg-transparent flex flex-col transition-colors duration-300 font-plus text-zinc-400">
       
       {/* Header Row */}
       <header className="bg-slate-950/20 backdrop-blur-md border-b border-white/10 px-6 py-4 shrink-0 shadow-lg print:hidden sticky top-0 z-40">
