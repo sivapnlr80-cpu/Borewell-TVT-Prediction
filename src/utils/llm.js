@@ -50,10 +50,12 @@ Drafting Guidelines:
      1. HEADER: 
         - For 'Memo' format, the main centered header at the very top of the A4 page MUST always be exactly:
           MEMORANDUM OF THE DIVISIONAL COOPERATIVE OFFICER, NELLORE
+          Directly on the next line, you MUST add:
+          SRI K. VENKATESWARLU, M.A.
         - For 'Proceedings' format, the main centered header at the very top of the A4 page MUST always be exactly:
           PROCEEDINGS OF THE DIVISIONAL COOPERATIVE OFFICER, NELLORE
-        - Directly on the next line for both formats, you MUST add:
-          SRI K. VENKATESWARLU, M.A.
+          Directly on the next line, you MUST add:
+          PRESENT: SRI K. VENKATESWARLU, M.A.
         - Both lines MUST be centered, bold, and uppercase. Do NOT use the reference document's header (e.g. "OFFICE OF THE DISTRICT COOPERATIVE OFFICER, NELLORE" or "OFFICE OF THE DIVISIONAL COOPERATIVE OFFICER, NELLORE") if it differs.
      2. REMOVE CLOSING SALUTATIONS & OFFICER NAME: In the signature block at the bottom right of the page, you MUST REMOVE the closing greetings like "Yours faithfully," and you MUST REMOVE the officer's name ("SRI K. VENKATESWARLU, M.A." or any other name). The signature block must ONLY contain the designation (e.g. "DIVISIONAL COOPERATIVE OFFICER") and location (e.g. "NELLORE") in uppercase, centered relative to itself. For example:
         <div style="float: right; text-align: center; width: 280px; line-height: 1.15; margin-top: 30px; margin-bottom: 20px; font-family: 'Times New Roman';">
