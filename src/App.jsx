@@ -203,29 +203,8 @@ export default function App() {
                 OFFICIAL DRAFTER
               </h1>
               <p className="text-[10px] text-amber-400 font-semibold tracking-wider font-space uppercase">
-                Luxury Financial Tech Drafting Suite
+                Next-Gen Administrative Drafting Console
               </p>
-            </div>
-          </div>
-
-          {/* Floating Fintech Elements */}
-          <div className="hidden md:flex items-center gap-6 select-none">
-            {/* Holographic Trend Graph */}
-            <div className="flex items-center gap-2 bg-slate-900/60 border border-emerald-500/20 rounded-full px-3 py-1 text-emerald-400 text-[10px] font-space tracking-wide shadow-[0_0_12px_rgba(16,185,129,0.15)]">
-              <svg className="w-10 h-6 text-emerald-400 filter drop-shadow-[0_0_4px_rgba(16,185,129,0.5)]" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 18 L10 12 L18 15 L28 4 L38 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="38" cy="8" r="2" fill="#fbbf24" className="animate-ping" />
-              </svg>
-              <span className="font-semibold">INDEX: +34.8%</span>
-            </div>
-            
-            {/* Translucent Coin */}
-            <div className="flex items-center gap-2 bg-slate-900/60 border border-amber-500/20 rounded-full px-3 py-1 text-amber-400 text-[10px] font-space tracking-wide shadow-[0_0_12px_rgba(245,158,11,0.15)]">
-              <svg className="w-5 h-5 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" strokeDasharray="4 2" />
-                <path d="M12 7 V17 M9 10 H15 M9 14 H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-              <span className="font-semibold">STABILITY: DUB-A1</span>
             </div>
           </div>
           
