@@ -174,7 +174,7 @@ export default function DocumentPreview({ htmlContent, onContentChange, docType,
       </div>
 
       {/* Main Preview Container */}
-      <div className="flex-1 overflow-auto bg-[#040406] hologram-grid p-6 flex justify-center items-start scrollbar-thin">
+      <div className="flex-1 overflow-hidden bg-[#040406] hologram-grid p-6 flex justify-center items-center">
         {htmlContent ? (
           /* A4 Sheet Simulation container */
           <div

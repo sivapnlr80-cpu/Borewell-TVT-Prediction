@@ -194,17 +194,38 @@ export default function App() {
     <div className="min-h-screen bg-transparent flex flex-col transition-colors duration-300 font-plus text-zinc-400">
       
       {/* Header Row */}
-      <header className="glass-panel border-b border-white/5 px-6 py-4 shrink-0 shadow-lg print:hidden sticky top-0 z-40">
+      <header className="bg-slate-950/20 backdrop-blur-md border-b border-white/10 px-6 py-4 shrink-0 shadow-lg print:hidden sticky top-0 z-40">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <img src="/logo.png" alt="Official Drafter Logo" className="w-14 h-14 object-contain rounded-xl border border-white/10 shadow-[0_0_20px_rgba(6,182,212,0.25)] bg-[#07070a] p-0.5" />
+            <img src="/logo.png" alt="Official Drafter Logo" className="w-14 h-14 object-contain rounded-xl border border-emerald-500/25 shadow-[0_0_20px_rgba(16,185,129,0.25)] bg-[#07070a] p-0.5" />
             <div>
-              <h1 className="text-2xl font-extrabold font-space tracking-tight text-white bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent drop-shadow-[0_1px_4px_rgba(255,255,255,0.1)]">
+              <h1 className="text-2xl font-extrabold font-space tracking-tight text-white bg-gradient-to-r from-emerald-400 via-white to-amber-300 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(16,185,129,0.25)]">
                 OFFICIAL DRAFTER
               </h1>
-              <p className="text-[10px] text-cyan-400 font-semibold tracking-wider font-space uppercase">
-                Next-Gen Administrative Drafting Console
+              <p className="text-[10px] text-amber-400 font-semibold tracking-wider font-space uppercase">
+                Luxury Financial Tech Drafting Suite
               </p>
+            </div>
+          </div>
+
+          {/* Floating Fintech Elements */}
+          <div className="hidden md:flex items-center gap-6 select-none">
+            {/* Holographic Trend Graph */}
+            <div className="flex items-center gap-2 bg-slate-900/60 border border-emerald-500/20 rounded-full px-3 py-1 text-emerald-400 text-[10px] font-space tracking-wide shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+              <svg className="w-10 h-6 text-emerald-400 filter drop-shadow-[0_0_4px_rgba(16,185,129,0.5)]" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 18 L10 12 L18 15 L28 4 L38 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="38" cy="8" r="2" fill="#fbbf24" className="animate-ping" />
+              </svg>
+              <span className="font-semibold">INDEX: +34.8%</span>
+            </div>
+            
+            {/* Translucent Coin */}
+            <div className="flex items-center gap-2 bg-slate-900/60 border border-amber-500/20 rounded-full px-3 py-1 text-amber-400 text-[10px] font-space tracking-wide shadow-[0_0_12px_rgba(245,158,11,0.15)]">
+              <svg className="w-5 h-5 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" strokeDasharray="4 2" />
+                <path d="M12 7 V17 M9 10 H15 M9 14 H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              <span className="font-semibold">STABILITY: DUB-A1</span>
             </div>
           </div>
           
@@ -213,7 +234,7 @@ export default function App() {
             {!settings.apiKey && (
               <button 
                 onClick={() => setIsSettingsOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-amber-950/20 border border-amber-900/30 text-amber-450 rounded-lg animate-pulse cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-amber-950/20 border border-amber-900/30 text-amber-400 rounded-lg animate-pulse cursor-pointer"
               >
                 <AlertTriangle className="w-3.5 h-3.5" />
                 Missing API Key

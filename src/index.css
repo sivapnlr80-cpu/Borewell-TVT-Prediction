@@ -11,17 +11,16 @@
 @layer base {
   body {
     font-family: var(--font-plus);
-    @apply antialiased text-zinc-400 bg-[#090a0f] transition-colors duration-300;
-    /* CSS Mesh Gradient with radial and linear-gradient overlays */
+    @apply antialiased text-zinc-400 bg-[#090b15] transition-colors duration-300;
+    /* Midnight Navy and Charcoal mesh gradient with fluid, organic shapes in Electric Emerald Green and Vivid Gold */
     background-image: 
-      linear-gradient(135deg, rgba(9, 10, 15, 0.98), rgba(17, 24, 39, 0.97)),
-      radial-gradient(circle at 0% 0%, rgba(6, 182, 212, 0.18) 0%, transparent 45%),
-      radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-      radial-gradient(circle at 50% 100%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.15) 0%, transparent 45%),
-      radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
-      radial-gradient(circle at 50% 50%, rgba(217, 119, 6, 0.06) 0%, transparent 60%);
-    background-blend-mode: normal, screen, screen, screen, screen, screen, screen;
+      linear-gradient(135deg, rgba(10, 17, 40, 0.98), rgba(28, 28, 30, 0.97)),
+      radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 45%), /* Emerald Green */
+      radial-gradient(circle at 90% 10%, rgba(245, 158, 11, 0.12) 0%, transparent 40%), /* Vivid Gold */
+      radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),  /* Emerald Green */
+      radial-gradient(circle at 80% 90%, rgba(245, 158, 11, 0.12) 0%, transparent 45%), /* Vivid Gold */
+      radial-gradient(circle at 30% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 60%); /* Indigo transition */
+    background-blend-mode: normal, screen, screen, screen, screen, screen;
     background-attachment: fixed;
   }
 }
@@ -185,7 +184,8 @@
 /* A4 Page Simulation for screen rendering - Futuristic Minimalist */
 .a4-page {
   width: 210mm;
-  min-height: 297mm;
+  height: 100% !important;
+  max-height: 80vh !important;
   padding: 25mm 20mm 25mm 30mm; /* Standard official margins (30mm left for binding/filing) */
   margin: 0 auto;
   background: #ffffff !important; /* Document preview paper is always white */
@@ -196,6 +196,9 @@
   box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 40px rgba(59, 130, 246, 0.05);
   position: relative;
   transition: box-shadow 0.3s ease;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
 }
 
 /* Typography styles based on selected language */
@@ -214,6 +217,9 @@
   color: #111111 !important;
   line-height: 1.65;
   letter-spacing: 0.1px;
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding-right: 4px;
 }
 
 .a4-content p {
@@ -345,4 +351,29 @@
     size: A4;
     margin: 0;
   }
+}
+
+/* Neo-brutalist & Glassmorphism File Upload drop-zone */
+.dropzone-neo-glass {
+  background: rgba(30, 41, 59, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 3px dashed #00d2ff !important; /* Thick vibrant electric-blue dashed */
+  box-shadow: 0 0 25px rgba(0, 210, 255, 0.35), 
+              6px 6px 0px rgba(0, 0, 0, 0.6) !important; /* Neo-brutalist thick offset shadow */
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.dropzone-neo-glass:hover {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 35px rgba(56, 189, 248, 0.55), 
+              10px 10px 0px rgba(0, 0, 0, 0.7) !important; /* Increased shadow on hover */
+  transform: translate(-4px, -4px); /* Interactive neo-brutalist movement */
+}
+.dropzone-neo-glass-active {
+  background: rgba(15, 23, 42, 0.9) !important;
+  border-color: #a78bfa !important; /* Neon violet on drag active */
+  box-shadow: 0 0 40px rgba(167, 139, 250, 0.65), 
+              4px 4px 0px rgba(0, 0, 0, 0.8) !important;
+  transform: translate(-2px, -2px);
 }
