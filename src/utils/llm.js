@@ -12,7 +12,8 @@ export const callLLM = async ({
   toneMode,
   narrative,
   chatHistory = [],
-  refinementRequest = ''
+  refinementRequest = '',
+  ragContext = []
 }) => {
   if (!apiKey) {
     throw new Error('API Key is missing. Please configure it in the settings panel.');
@@ -135,13 +136,23 @@ ${narrative}
 
   let prompt = '';
   
+  let ragContextSection = '';
+  if (ragContext && ragContext.length > 0) {
+    ragContextSection = `
+=== RETRIEVED KNOWLEDGE BASE CONTEXT (RAG) ===
+The following sections are retrieved from the uploaded administrative reference documents. Use the instructions, rules, and facts in this context to ground your draft and ensure factual correctness:
+${ragContext.map((text, idx) => `[Context Chunk ${idx + 1}]:\n${text}`).join('\n\n')}
+==============================================
+`;
+  }
+  
   if (refinementRequest) {
     // If it's a refinement request, append context
     const previousMessages = chatHistory
       .map(msg => `${msg.sender === 'user' ? 'User' : 'Assistant'}: ${msg.text}`)
       .join('\n');
 
-    prompt = `${systemPrompt}\n\nThis is a refinement request. A draft has already been generated. Refine the draft based on the user's feedback.
+    prompt = `${systemPrompt}\n\n${ragContextSection}\n\nThis is a refinement request. A draft has already been generated. Refine the draft based on the user's feedback.
     
 Previous Chat History:
 ${previousMessages}
@@ -151,7 +162,7 @@ User's Refinement Feedback:
 
 Generate the updated document wrapped in \`<document_html>...</document_html>\`. Keep the style and tone parameters active. Make only the changes requested by the user.`;
   } else {
-    prompt = `${systemPrompt}\n\nDraft the complete document now. Generate the document wrapped in \`<document_html>...</document_html>\`.`;
+    prompt = `${systemPrompt}\n\n${ragContextSection}\n\nDraft the complete document now. Generate the document wrapped in \`<document_html>...</document_html>\`.`;
   }
 
   // Invoke the API based on the provider

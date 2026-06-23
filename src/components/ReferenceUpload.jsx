@@ -45,62 +45,6 @@ export default function ReferenceUpload({ onUploadSuccess, onError, currentRefer
     }
   };
 
-  if (variant === 'header') {
-    return (
-      <div className="flex items-center gap-3">
-        <div
-          onDragEnter={handleDrag}
-          onDragOver={handleDrag}
-          onDragLeave={handleDrag}
-          onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className={`relative overflow-hidden transition-all duration-300 border border-dashed rounded-lg px-3 py-1.5 text-center cursor-pointer min-w-[180px] max-w-[240px] flex items-center justify-center gap-2 ${
-            isDragActive 
-              ? 'border-cyan-400 bg-cyan-500/10 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]' 
-              : currentReference
-                ? 'border-emerald-500/30 bg-emerald-950/10 text-emerald-400 hover:bg-emerald-950/20'
-                : 'border-white/10 bg-white/5 text-zinc-300 hover:border-cyan-500/30 hover:text-cyan-450 hover:bg-white/10'
-          }`}
-        >
-          {isParsing && <div className="scanning-line" />}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept=".pdf,.docx"
-            className="hidden"
-          />
-
-          {isParsing ? (
-            <>
-              <RefreshCw className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
-              <span className="text-[11px] font-bold text-zinc-200">Scanning...</span>
-            </>
-          ) : currentReference ? (
-            <>
-              <CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-              <div className="text-left overflow-hidden">
-                <p className="text-[11px] font-bold text-zinc-200 leading-none truncate max-w-[110px]">{currentReference.name}</p>
-                <p className="text-[9px] text-zinc-500 mt-0.5">Click to replace</p>
-              </div>
-            </>
-          ) : (
-            <>
-              <Upload className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-              <div className="text-left">
-                <p className="text-[11px] font-bold leading-none">Upload Reference</p>
-                <p className="text-[9px] text-zinc-500 mt-0.5">PDF or DOCX</p>
-              </div>
-            </>
-          )}
-        </div>
-        <div className="text-[9px] text-zinc-400 leading-normal max-w-[260px] font-medium font-space">
-          Reference file is <span className="text-cyan-400 font-semibold">chunked</span> and stored in an offline <span className="text-cyan-400 font-semibold">vector database</span> for RAG-augmented layout & style narrative mapping.
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
       <div

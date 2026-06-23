@@ -7,6 +7,9 @@ import ChatPanel from './components/ChatPanel';
 import SettingsModal from './components/SettingsModal';
 import Toast from './components/Toast';
 import { callLLM } from './utils/llm';
+import RAGSection from './components/RAGSection';
+import { chunkText, getEmbeddings, retrieveRelevantContext } from './utils/ragEngine';
+import { parseDocument } from './utils/documentParser';
 
 export default function App() {
   // Theme state (Dark Mode / Light Mode)
@@ -64,6 +67,11 @@ export default function App() {
   const [chatMessages, setChatMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // RAG States
+  const [ragDocuments, setRagDocuments] = useState([]);
+  const [ragChunks, setRagChunks] = useState([]);
+  const [isRAGLoading, setIsRAGLoading] = useState(false);
+
   // Sync theme to root HTML element
   useEffect(() => {
     if (isDarkMode) {
@@ -89,6 +97,79 @@ export default function App() {
     showToast(errorMessage, 'error');
   };
 
+  // Handle RAG Document upload, chunking, and embedding
+  const handleUploadRAG = async (files) => {
+    setIsRAGLoading(true);
+    let newDocs = [...ragDocuments];
+    let newChunks = [...ragChunks];
+    let processedCount = 0;
+    let failedCount = 0;
+
+    try {
+      for (const file of files) {
+        if (newDocs.some(d => d.name === file.name)) {
+          showToast(`File "${file.name}" is already in the knowledge base.`, 'warning');
+          continue;
+        }
+
+        try {
+          const parsed = await parseDocument(file);
+          const chunks = chunkText(parsed.text);
+          
+          if (chunks.length === 0) {
+            showToast(`Document "${file.name}" has no extractable text.`, 'warning');
+            continue;
+          }
+
+          let embeddings = null;
+          if (settings.apiKey && (settings.provider === 'gemini' || settings.provider === 'openai')) {
+            showToast(`Vectorizing "${file.name}" using LLM Embeddings...`, 'info');
+            embeddings = await getEmbeddings(chunks, settings.provider, settings.apiKey);
+          }
+
+          const chunkObjs = chunks.map((text, idx) => ({
+            id: `${file.name}-${idx}`,
+            docName: file.name,
+            text: text,
+            embedding: embeddings ? embeddings[idx] : null
+          }));
+
+          newChunks = newChunks.concat(chunkObjs);
+          newDocs.push({
+            name: file.name,
+            size: file.size,
+            chunksCount: chunks.length
+          });
+          processedCount++;
+        } catch (e) {
+          console.error("Failed to parse file:", file.name, e);
+          failedCount++;
+        }
+      }
+
+      setRagDocuments(newDocs);
+      setRagChunks(newChunks);
+
+      if (processedCount > 0) {
+        showToast(`Successfully chunked and indexed ${processedCount} document(s) in Vector DB!`, 'success');
+      }
+      if (failedCount > 0) {
+        showToast(`Failed to parse ${failedCount} document(s).`, 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Error vectorizing knowledge sources.', 'error');
+    } finally {
+      setIsRAGLoading(false);
+    }
+  };
+
+  const handleDeleteRAGDocument = (docName) => {
+    setRagDocuments(prev => prev.filter(d => d.name !== docName));
+    setRagChunks(prev => prev.filter(c => c.docName !== docName));
+    showToast(`Removed "${docName}" from knowledge database.`, 'info');
+  };
+
   // Generate Initial Document Draft
   const handleGenerateDocument = async () => {
     if (!currentReference) {
@@ -109,6 +190,18 @@ export default function App() {
     setChatMessages([]); // Reset chat history on a new generation
     
     try {
+      let retrievedContext = [];
+      if (ragChunks.length > 0) {
+        showToast('Retrieving context from Vector DB...', 'info');
+        retrievedContext = await retrieveRelevantContext(
+          narrative,
+          ragChunks,
+          settings.provider,
+          settings.apiKey,
+          5
+        );
+      }
+
       const docHtml = await callLLM({
         provider: settings.provider,
         apiKey: settings.apiKey,
@@ -118,7 +211,8 @@ export default function App() {
         metadata: formData,
         draftingLanguage,
         toneMode,
-        narrative
+        narrative,
+        ragContext: retrievedContext.map(c => c.text)
       });
 
       setGeneratedDocument(docHtml);
@@ -147,6 +241,18 @@ export default function App() {
     setIsLoading(true);
 
     try {
+      let retrievedContext = [];
+      if (ragChunks.length > 0) {
+        const query = `${narrative} \nRefinement: ${messageText}`;
+        retrievedContext = await retrieveRelevantContext(
+          query,
+          ragChunks,
+          settings.provider,
+          settings.apiKey,
+          5
+        );
+      }
+
       const updatedDocHtml = await callLLM({
         provider: settings.provider,
         apiKey: settings.apiKey,
@@ -158,7 +264,8 @@ export default function App() {
         toneMode,
         narrative,
         chatHistory: [...chatMessages, userMsg],
-        refinementRequest: messageText
+        refinementRequest: messageText,
+        ragContext: retrievedContext.map(c => c.text)
       });
 
       setGeneratedDocument(updatedDocHtml);
@@ -208,16 +315,6 @@ export default function App() {
             </div>
           </div>
           
-          {/* Reference Upload Section in Header */}
-          <div className="hidden lg:flex items-center gap-4 border border-cyan-500/20 bg-cyan-950/10 p-2 px-3.5 rounded-xl backdrop-blur-sm">
-            <ReferenceUpload
-              onUploadSuccess={handleUploadSuccess}
-              onError={handleParserError}
-              currentReference={currentReference}
-              variant="header"
-            />
-          </div>
-
           <div className="flex items-center gap-2">
             {/* API key warning indicator */}
             {!settings.apiKey && (
@@ -258,10 +355,10 @@ export default function App() {
         {/* Left Panel: Input & Controls (Editor Column) */}
         <section className="editor-container w-full flex flex-col gap-6 print:hidden box-border">
           
-          {/* Reference Upload Box */}
+          {/* 1. Format Reference */}
           <div className="glass-panel border-vibgyor rounded-xl p-5 glow-card space-y-3">
             <h2 className="text-xs font-bold text-cyan-400 font-space tracking-widest uppercase">
-              1. Format & Style Reference
+              1. Format Reference
             </h2>
             <ReferenceUpload
               onUploadSuccess={handleUploadSuccess}
@@ -270,10 +367,25 @@ export default function App() {
             />
           </div>
 
-          {/* Dynamic Input Form */}
+          {/* 2. RAG Section */}
+          <div className="glass-panel border-vibgyor rounded-xl p-5 glow-card space-y-3">
+            <h2 className="text-xs font-bold text-indigo-400 font-space tracking-widest uppercase">
+              2. RAG (Knowledge Reference)
+            </h2>
+            <RAGSection
+              ragDocuments={ragDocuments}
+              onUploadRAG={handleUploadRAG}
+              onDeleteDocument={handleDeleteRAGDocument}
+              isRAGLoading={isRAGLoading}
+              provider={settings.provider}
+              hasApiKey={!!settings.apiKey}
+            />
+          </div>
+
+          {/* 3. Metadata & Narrative */}
           <div className="glass-panel rounded-xl p-5 glow-card space-y-3">
             <h2 className="text-xs font-bold text-cyan-400 font-space tracking-widest uppercase">
-              2. Metadata & Narrative
+              3. Metadata & Narrative
             </h2>
             <DocumentForm
               docType={docType}
