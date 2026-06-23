@@ -349,7 +349,7 @@ export default function App() {
       <header className="bg-slate-950/20 backdrop-blur-md border-b border-white/10 px-6 py-4 shrink-0 shadow-lg print:hidden sticky top-0 z-40">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <img src="/logo.png" alt="Official Drafter Logo" className="w-24 h-24 object-contain rounded-2xl border-2 border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.3)] bg-[#07070a] p-1.5" />
+            <img src="logo.png" alt="Official Drafter Logo" className="w-24 h-24 object-contain rounded-2xl border-2 border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.3)] bg-[#07070a] p-1.5" />
             <div>
               <h1 className="text-2xl font-extrabold font-space tracking-tight text-white bg-gradient-to-r from-[#ff9933] via-white to-[#138808] bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(255,153,51,0.25)]">
                 OFFICIAL DRAFTER
