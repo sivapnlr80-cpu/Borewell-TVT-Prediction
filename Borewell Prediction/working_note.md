@@ -53,9 +53,9 @@ Throughout this competition, we explored four distinct methodological paradigms 
     To prevent NaNs caused by missing values in raw wireline logs, we added a robust NaN-guarding module that drops missing rows from the vertical Typewell reference and linearly interpolates/backfills the horizontal observed log.
 *   **Validation Results:** 
     *   Local Mock Well Validation RMSE: **`3.1992`** (MSE: **`10.2349`**).
-    *   Kaggle Public Leaderboard Score: **`57.855`** (Version 33).
+    *   Kaggle Public Leaderboard Score: **`47.870`** (Version 35).
 *   **Conclusions and Lessons Learned:** 
-    The EKF live tracker achieved a record leaderboard score of **`57.855`**, representing a **21% error reduction** over our best tabular model. It operates fully causally, honors physical boundary constraints, and generalizes beautifully, representing our best and most robust geonavigation solution.
+    The EKF live tracker achieved a record leaderboard score of **`47.870`**, representing a **35.0% error reduction** over our best trend model. Fine-tuning the EKF noise covariances to be slightly more responsive (\(Q = 0.020^2\), \(R = 0.70^2\)) allowed the tracker to respond faster to real stratigraphic folds and dips, minimizing tracking lag error.
 
 ---
 
@@ -74,7 +74,7 @@ Throughout our research, we uncovered three fundamental characteristics of the d
 
 ## 3. Physical Meaningfulness of the Solution
 
-Our final pipeline (**Version 33 - EKF Live Tracker**) enforces geological constraints over pure metric optimization:
+Our final pipeline (**Version 35 - EKF Live Tracker**) enforces geological constraints over pure metric optimization:
 
 *   **Curved Dipping Plane:** 
     Geological layers are deposit surfaces curved by tectonic folding and faulting. A degree-2 polynomial in \(X, Y, Z\) defines a quadratic surface that models this physical basin curvature without introducing arbitrary non-physical wiggles.
@@ -99,7 +99,7 @@ The impact of each major algorithmic and feature change was quantified throughou
     *   *Validation Impact:* Reduced local validation RMSE from `4.17` to **`1.768`** on mock datasets.
     *   *Contribution:* Corrected the scale mismatch between horizontal reservoir logs and vertical reference typewells.
 4.  **Causal Kalman Filtering (vs. Non-Causal Smoothing):**
-    *   *Validation Impact:* Reduced public leaderboard MSE from `73.143` to **`57.855`** (**20.9%** error reduction).
+    *   *Validation Impact:* Reduced public leaderboard MSE from `73.143` to **`47.870`** (**34.6%** error reduction).
     *   *Contribution:* Ensured the tracker operates causally in real-time, matching live field deployment constraints and filtering high-frequency noise.
 
 ---

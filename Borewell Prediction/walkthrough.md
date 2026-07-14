@@ -6,7 +6,7 @@ This document outlines the design history, final model architecture, key scienti
 
 ## 1. Executive Summary & Final Architecture
 
-Our final submission (**Version 33 - Corrected Robust Causal EKF Live Tracker**) achieves a record public leaderboard score of **`57.855`** (MSE). It consists of three integrated components designed to run locally per-well:
+Our final submission (**Version 35 - More Responsive Causal EKF Live Tracker**) achieves a record public leaderboard score of **`47.870`** (MSE). It consists of three integrated components designed to run locally per-well:
 
 1. **Curved Dipping Plane Engine (Structural Trend):**
    A local per-well degree-2 polynomial in $(X, Y, Z)$ coordinates with Ridge regularization ($\alpha=10.0$). By excluding Measured Depth (`MD`), it eliminates lateral extrapolation drift, yielding a local validation RMSE of **`1.05115`**.
@@ -14,6 +14,7 @@ Our final submission (**Version 33 - Corrected Robust Causal EKF Live Tracker**)
    Models the stratigraphic offset relative to our Curved Dipping Plane as a dynamic state and performs causal measurement updates using the linearized local Gamma Ray gradient of the vertical Typewell log:
    $$H_k = \frac{d GR_{\text{typewell}}}{d TVT}$$
    Features a robust NaN-guarding module that drops missing values from the vertical reference and interpolates the horizontal observed log, preventing NaN propagation.
+   *   **Optimized Noise Parameters:** Process noise $Q = 0.020^2$, Measurement noise $R = 0.70^2$. This responsive configuration tracks geological dips and folds with minimal lag error.
 3. **Uncertainty Quantification Engine:**
    Computes a localized **Prediction Confidence Score (PCS)** (0% to 100%) by combining spatial extrapolation distance penalties and Gamma Ray correlation mismatch metrics.
 
@@ -42,8 +43,8 @@ Throughout the development process, we explored four distinct methodological par
 
 #### Paradigm D: Causal Extended Kalman Filter Live Tracker
 *   **The Approach:** Run an EKF foot-by-foot where state transitions project the stratigraphic offset forward, and measurements are updated recursively using local gradients of the vertical Typewell GR curve.
-*   **Results:** Public Leaderboard Score: **`57.855`** (Version 33).
-*   **Lessons Learned:** The EKF tracker filters high-frequency noise and ties the spatial polynomial trend line back to the stratigraphic reference, reducing prediction error by **20.9%** over the best tabular model.
+*   **Results:** Public Leaderboard Score: **`47.870`** (Version 35).
+*   **Lessons Learned:** The EKF tracker filters high-frequency noise and ties the spatial polynomial trend line back to the stratigraphic reference, reducing prediction error by **34.6%** over the best trend model.
 
 ---
 
@@ -57,7 +58,7 @@ Throughout the development process, we explored four distinct methodological par
 
 ### Physical Meaningfulness of the Solution
 
-Our final pipeline (**Version 33 - EKF Live Tracker**) enforces geological constraints over pure metric optimization:
+Our final pipeline (**Version 35 - EKF Live Tracker**) enforces geological constraints over pure metric optimization:
 *   Geological layers are deposit planes that curve smoothly in 3D space $(X, Y, Z)$. The degree-2 polynomial plane:
     $$\text{TVT} = f(X, Y, Z)$$
     models the structural geometry of the basin.
@@ -76,12 +77,13 @@ graph TD
     B --> C["Local Per-Well Ridge (Linear) <br> Score: 79.69"]
     C --> D["Local Per-Well Poly-Ridge (Version 15) <br> Score: 72.40"]
     D --> E["Improved Curved Plane (Version 29) <br> Score: 73.14 (Safe Extrapolation)"]
-    E --> F["Causal EKF Live Tracker (Version 33) <br> Score: 57.85 (Final Milestone)"]
+    E --> F["Causal EKF Live Tracker (Version 33) <br> Score: 57.85 (Kalman Filtering)"]
+    F --> G["More Responsive EKF Tracker (Version 35) <br> Score: 47.87 (Final Milestone)"]
 ```
 
 *   **Local Per-Well Modeling:** Reduced MSE by **99.9%** compared to global coordinate-based models.
 *   **Polynomial Curvature ($d=2$):** Reduced MSE from `79.69` to `72.40` (**9.1%** error reduction) by capturing curved geological dips.
-*   **Causal Extended Kalman Filter:** Reduced public leaderboard MSE from `73.14` to **`57.855`** (**20.9%** error reduction) by dynamically tracking stratigraphic position in real-time.
+*   **Causal Extended Kalman Filter:** Reduced public leaderboard MSE from `73.14` to **`47.870`** (**34.6%** error reduction) by dynamically tracking stratigraphic position in real-time.
 
 ---
 
@@ -105,18 +107,18 @@ The combined score $PCS = 100 \times \text{Spatial\_Conf} \times \text{GR\_Conf}
 The pipeline prints detailed diagnostic summaries for each test well:
 ```text
 [+] Live Geosteering Well 000d7d20:
-    - Real-Time TVT Range: [11736.34, 11750.25]
-    - Average PCS (Prediction Confidence): 70.2%
+    - Real-Time TVT Range: [11738.98, 11751.35]
+    - Average PCS (Prediction Confidence): 72.5%
     - Time spent in target reservoir: 0.0%
 
 [+] Live Geosteering Well 00bbac68:
-    - Real-Time TVT Range: [12039.29, 12225.91]
-    - Average PCS (Prediction Confidence): 44.9%
+    - Real-Time TVT Range: [12075.70, 12225.87]
+    - Average PCS (Prediction Confidence): 47.0%
     - Time spent in target reservoir: 0.0%
 
 [+] Live Geosteering Well 00e12e8b:
-    - Real-Time TVT Range: [11577.01, 11605.46]
-    - Average PCS (Prediction Confidence): 64.3%
+    - Real-Time TVT Range: [11580.07, 11605.47]
+    - Average PCS (Prediction Confidence): 66.3%
     - Time spent in target reservoir: 0.0%
 ```
 
