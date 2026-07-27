@@ -1,0 +1,13 @@
+{
+  "id": "sivapnlr80/rogii-tvt-prediction",
+  "title": "Rogii TVT Prediction",
+  "code_file": "predict_tvt.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "false",
+  "enable_internet": "false",
+  "dataset_sources": [],
+  "competition_sources": ["rogii-wellbore-geology-prediction"],
+  "kernel_sources": []
+}
