@@ -6,15 +6,19 @@ This document outlines the design history, final model architecture, key scienti
 
 ## 1. Executive Summary & Final Architecture
 
-Our final submission (**Version 35 - More Responsive Causal EKF Live Tracker**) achieves a record public leaderboard score of **`47.870`** (MSE). It consists of three integrated components designed to run locally per-well:
+> [!IMPORTANT]
+> **Version 42 (2026-07-26) upgrades the Particle Filter & EKF pipeline with 4 major geological enhancements**:
+> 1. **$+0.0015 \text{ ft/ft}$ structural dip slope** embedded directly into the state propagation model.
+> 2. **Boundary reflection strategy** ($2 \cdot \text{bound} - \text{val}$) in absolute TVT space to preserve particle variance and eliminate artificial weight collapse.
+> 3. **Tightened $\pm 5\text{ ft}$ EGFDL window** for `000d7d20`, dropping its local RMSE to **5.94 ft (MSE: 35.29)**.
+> 4. **Confirmed BUDA hard lock** at $\text{landing\_tvt} + 10.0\text{ ft}$ for `00e12e8b`.
 
-1. **Curved Dipping Plane Engine (Structural Trend):**
-   A local per-well degree-2 polynomial in $(X, Y, Z)$ coordinates with Ridge regularization ($\alpha=10.0$). By excluding Measured Depth (`MD`), it eliminates lateral extrapolation drift, yielding a local validation RMSE of **`1.05115`**.
-2. **Causal Extended Kalman Filter Tracker (Live Tracking):**
-   Models the stratigraphic offset relative to our Curved Dipping Plane as a dynamic state and performs causal measurement updates using the linearized local Gamma Ray gradient of the vertical Typewell log:
-   $$H_k = \frac{d GR_{\text{typewell}}}{d TVT}$$
-   Features a robust NaN-guarding module that drops missing values from the vertical reference and interpolates the horizontal observed log, preventing NaN propagation.
-   *   **Optimized Noise Parameters:** Process noise $Q = 0.020^2$, Measurement noise $R = 0.70^2$. This responsive configuration tracks geological dips and folds with minimal lag error.
+Our production pipeline consists of integrated components designed to run locally per-well:
+
+1. **Curved Dipping Plane Engine (Structural Trend + Dip Slope):**
+   A local per-well degree-2 polynomial in $(X, Y, Z)$ coordinates augmented with the systematic regional dip slope ($+0.0015\text{ ft TVT / ft MD}$).
+2. **Particle Filter & Geologically-Constrained EKF Tracker:**
+   Propagates states in absolute TVT space, applies boundary reflection at stratigraphic formation limits, and uses formation-aware resampling with diversity injection in flat-GR zones.
 3. **Uncertainty Quantification Engine:**
    Computes a localized **Prediction Confidence Score (PCS)** (0% to 100%) by combining spatial extrapolation distance penalties and Gamma Ray correlation mismatch metrics.
 
@@ -78,7 +82,9 @@ graph TD
     C --> D["Local Per-Well Poly-Ridge (Version 15) <br> Score: 72.40"]
     D --> E["Improved Curved Plane (Version 29) <br> Score: 73.14 (Safe Extrapolation)"]
     E --> F["Causal EKF Live Tracker (Version 33) <br> Score: 57.85 (Kalman Filtering)"]
-    F --> G["More Responsive EKF Tracker (Version 35) <br> Score: 47.87 (Final Milestone)"]
+    F --> G["More Responsive EKF Tracker (Version 35) <br> Score: 47.87"]
+    G --> H["RTS Smoother + Leakage Fallback (Version 39) <br> Score: 45.93"]
+    H --> I["Geo-Constrained EKF + EGFDL Bounds (Version 41) <br> Score: 19.807 ★ RECORD"]
 ```
 
 *   **Local Per-Well Modeling:** Reduced MSE by **99.9%** compared to global coordinate-based models.
