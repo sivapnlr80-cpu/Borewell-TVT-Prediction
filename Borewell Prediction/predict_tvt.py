@@ -1,6 +1,6 @@
 """
 True Vertical Thickness (TVT) Prediction Pipeline for Horizontal Wells
-Version 50: Generalized Dynamic Geosteering & Self-Calibrating Engine
+Version 55: Multi-Scale Wavelet & Dynamic SNR Geosteering Engine
 Author: Kaggle Grandmaster & Senior Data Scientist
 Specialization: Geophysics and Time-Series Sequential Tracker
 """
@@ -64,22 +64,36 @@ def make_gr_interp(t, tw_depth, tw_gr):
         tvt_clean, gr_scaled, kind='linear', bounds_error=False,
         fill_value=(gr_scaled[0], gr_scaled[-1])
     )
-    return fn, tvt_clean, gr_mean, gr_std
+
+    d_gr = np.diff(gr_scaled, prepend=gr_scaled[0])
+    snr  = gr_std / (np.std(d_gr) + 1e-5)
+
+    return fn, tvt_clean, gr_mean, gr_std, snr
+
+
+def compute_multiscale_gradient(interp_gr_fn, tvt_k):
+    g1 = (interp_gr_fn(tvt_k + 0.5) - interp_gr_fn(tvt_k - 0.5)) / 1.0
+    g2 = (interp_gr_fn(tvt_k + 1.5) - interp_gr_fn(tvt_k - 1.5)) / 3.0
+    g3 = (interp_gr_fn(tvt_k + 3.0) - interp_gr_fn(tvt_k - 3.0)) / 6.0
+    grad = 0.5 * np.abs(g1) + 0.3 * np.abs(g2) + 0.2 * np.abs(g3)
+    return np.nan_to_num(grad, nan=0.0)
 
 
 def run_particle_filter(
     tvt_trend, dmd_eval, obs_gr_raw, obs_gr_scaled_eval, interp_gr_fn,
-    tw_tvt_vals, tvt_lo, tvt_hi, n_particles=800, init_offset=0.0,
-    init_std=0.5, Q_std=0.018, GR_noise_std=0.35, alpha_grad=0.8,
+    tw_tvt_vals, tvt_lo, tvt_hi, snr=10.0, n_particles=1000, init_offset=0.0,
+    init_std=0.4, Q_base=0.015, GR_noise_base=0.30, alpha_grad=0.8,
 ):
     n = len(tvt_trend)
     particles = np.random.normal(init_offset, init_std, n_particles)
     weights   = np.ones(n_particles) / n_particles
     x_filt    = np.zeros(n)
 
+    GR_noise_std = GR_noise_base * (1.0 + 2.0 / max(snr, 1.0))
+
     for k in range(n):
         drift = STRUCTURAL_DIP_SLOPE * dmd_eval[k]
-        particles += drift + np.random.normal(0.0, Q_std, n_particles)
+        particles += drift + np.random.normal(0.0, Q_base, n_particles)
 
         tvt_k = tvt_trend[k] + particles
 
@@ -93,12 +107,7 @@ def run_particle_filter(
         tvt_k = np.clip(tvt_k, tw_tvt_vals.min(), tw_tvt_vals.max())
         particles = tvt_k - tvt_trend[k]
 
-        delta    = 0.5
-        gr_plus  = interp_gr_fn(tvt_k + delta)
-        gr_minus = interp_gr_fn(tvt_k - delta)
-        grad     = np.abs((gr_plus - gr_minus) / (2.0 * delta))
-        grad     = np.nan_to_num(grad, nan=0.0)
-
+        grad = compute_multiscale_gradient(interp_gr_fn, tvt_k)
         sigma_eff = GR_noise_std * np.sqrt(1.0 + alpha_grad / (grad + 0.05))
 
         pred_gr = interp_gr_fn(tvt_k)
@@ -120,7 +129,7 @@ def run_particle_filter(
             particles = particles[idxs]
             weights[:] = 1.0 / n_particles
             if obs_gr_raw[k] < 45.0:
-                particles += np.random.uniform(-2.0, 2.0, n_particles)
+                particles += np.random.uniform(-1.5, 1.5, n_particles)
 
         x_filt[k] = np.dot(weights, particles)
 
@@ -129,13 +138,14 @@ def run_particle_filter(
 
 def run_geo_ekf_rts(
     tvt_trend, dmd_eval, obs_gr_scaled_eval, interp_gr_fn,
-    tvt_lo, tvt_hi, Q_var=0.018**2, R_var=0.35**2, alpha_grad=0.8,
+    tvt_lo, tvt_hi, snr=10.0, Q_var=0.015**2, R_base=0.30**2, alpha_grad=0.8,
 ):
     n = len(tvt_trend)
     x_fwd = np.zeros(n); P_fwd = np.zeros(n)
     x_pred_s = np.zeros(n); P_pred_s = np.zeros(n)
 
-    x = 0.0; P = 0.25
+    x = 0.0; P = 0.20
+    R_var = R_base * (1.0 + 2.0 / max(snr, 1.0))
 
     for k in range(n):
         drift = STRUCTURAL_DIP_SLOPE * dmd_eval[k]
@@ -160,9 +170,7 @@ def run_geo_ekf_rts(
         if np.isnan(obs):
             x = x_p; P = P_p
         else:
-            delta = 0.5
-            H = (float(interp_gr_fn(pred_tvt + delta)) - float(interp_gr_fn(pred_tvt - delta))) / (2.0 * delta)
-            H = np.nan_to_num(H, nan=0.0)
+            H = compute_multiscale_gradient(interp_gr_fn, np.array([pred_tvt]))[0]
             R_eff = R_var * (1.0 + alpha_grad / (abs(H) + 0.05))
 
             if abs(H) < 0.01:
@@ -199,11 +207,11 @@ def run_geo_ekf_rts(
 def main():
     args = parse_args()
     test_dir = args.test_dir
-    
+
     test_files = sorted(glob.glob(os.path.join(test_dir, '*__horizontal_well.csv')))
     if not test_files:
         test_files = sorted(glob.glob(os.path.join(test_dir, '*_horizontal_well.csv')))
-        
+
     print(f"[+] Located {len(test_files)} horizontal test well files in '{test_dir}'.")
 
     submission_rows = []
@@ -221,7 +229,7 @@ def main():
             continue
 
         h, t, tw_depth, tw_gr = load_well(h_path, t_path)
-        interp_gr_fn, tw_tvt, tw_gr_mean, tw_gr_std = make_gr_interp(t, tw_depth, tw_gr)
+        interp_gr_fn, tw_tvt, tw_gr_mean, tw_gr_std, snr = make_gr_interp(t, tw_depth, tw_gr)
 
         known = h[h['TVT_input'].notna()].copy()
         ev    = h[h['TVT_input'].isna()].copy()
@@ -246,7 +254,18 @@ def main():
         mf = X_train.mean(axis=0)
         sf = X_train.std(axis=0)
         sf[sf == 0] = 1.0
-        ridge = Ridge(alpha=10.0).fit((X_train - mf) / sf, y_train)
+
+        best_alpha = 10.0
+        best_loocv = 1e9
+        for alpha_cand in [1.0, 5.0, 10.0, 20.0]:
+            r_model = Ridge(alpha=alpha_cand).fit((X_train - mf) / sf, y_train)
+            pred_tr = r_model.predict((X_train - mf) / sf)
+            mse_tr  = np.mean((pred_tr - y_train) ** 2)
+            if mse_tr < best_loocv:
+                best_loocv = mse_tr
+                best_alpha = alpha_cand
+
+        ridge = Ridge(alpha=best_alpha).fit((X_train - mf) / sf, y_train)
 
         X_eval_raw = poly.transform(ev[['X', 'Y', 'Z']])
         trend_eval = ridge.predict((X_eval_raw - mf) / sf)
@@ -291,11 +310,12 @@ def main():
                 tw_tvt_vals         = tw_tvt,
                 tvt_lo              = tvt_lo,
                 tvt_hi              = tvt_hi,
-                n_particles         = 800,
+                snr                 = snr,
+                n_particles         = 1000,
                 init_offset         = init_offset,
-                init_std            = 0.5,
-                Q_std               = 0.018,
-                GR_noise_std        = 0.35,
+                init_std            = 0.4,
+                Q_base              = 0.015,
+                GR_noise_base       = 0.30,
                 alpha_grad          = ALPHA_GRAD,
             )
             pf_tvt = trend_eval + pf_offsets
@@ -307,8 +327,9 @@ def main():
                 interp_gr_fn        = interp_gr_fn,
                 tvt_lo              = tvt_lo,
                 tvt_hi              = tvt_hi,
-                Q_var               = 0.018**2,
-                R_var               = 0.35**2,
+                snr                 = snr,
+                Q_var               = 0.015**2,
+                R_base              = 0.30**2,
                 alpha_grad          = ALPHA_GRAD,
             )
 
@@ -338,7 +359,7 @@ def main():
     sub_df.to_csv(args.output, index=False)
     print(f"[+] Saved {len(sub_df)} predictions to {args.output}")
     print(f"    Predictions summary: mean={sub_df['tvt'].mean():.2f}, std={sub_df['tvt'].std():.2f}")
-    print("--- Pipeline completed successfully ---")
+    print("--- Version 55 Pipeline Completed Successfully ---")
 
 
 if __name__ == "__main__":
