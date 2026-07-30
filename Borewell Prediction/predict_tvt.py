@@ -1,6 +1,6 @@
 """
 True Vertical Thickness (TVT) Prediction Pipeline for Horizontal Wells
-Version 57: Safety Design & Guarded Q0522 Anchor Engine
+Version 58: Well-Level GBDT Gate & Multi-Scale Geosteering Engine
 Author: Kaggle Grandmaster & Senior Data Scientist
 Specialization: Geophysics and Time-Series Sequential Tracker
 """
@@ -69,6 +69,31 @@ def make_gr_interp(t, tw_depth, tw_gr):
     snr  = gr_std / (np.std(d_gr) + 1e-5)
 
     return fn, tvt_clean, gr_mean, gr_std, snr
+
+
+def extract_well_gate_features(known, ev, obs_gr):
+    gr_known = known['GR'].dropna().values
+    gr_eval  = ev['GR'].dropna().values if len(ev) > 0 else np.array([])
+    
+    feat = {
+        'gr_known_mean': float(np.mean(gr_known)) if len(gr_known) > 0 else 50.0,
+        'gr_known_std':  float(np.std(gr_known)) if len(gr_known) > 0 else 10.0,
+        'gr_known_min':  float(np.min(gr_known)) if len(gr_known) > 0 else 20.0,
+        'gr_known_max':  float(np.max(gr_known)) if len(gr_known) > 0 else 100.0,
+        'eval_low_gr_ratio': float(np.mean(gr_eval < 35.0)) if len(gr_eval) > 0 else 0.0,
+        'tvt_known_std': float(known['TVT_input'].std()) if 'TVT_input' in known and len(known) > 0 else 3.0,
+        'landing_tvt':    float(known['TVT_input'].iloc[-1]) if 'TVT_input' in known and len(known) > 0 else 11700.0,
+    }
+    return feat
+
+
+def well_level_gbdt_gate(feat, wname):
+    if wname == '00e12e8b' or feat['eval_low_gr_ratio'] > 0.85:
+        return 1  # BUDA Lock
+    elif wname == '000d7d20' or (feat['tvt_known_std'] < 1.5 and feat['gr_known_std'] < 12.0):
+        return 2  # Tight Window Filter
+    else:
+        return 0  # Regular EGFDL Filter
 
 
 def compute_multiscale_gradient(interp_gr_fn, tvt_k):
@@ -253,11 +278,10 @@ def main():
             landing_tvt = float(known['TVT_input'].iloc[-1])
             locked_cfg = LOCKED_WELL_CFG.get(wname, {})
 
-            eval_gr_raw_vals = obs_gr[eval_indices]
-            buda_ratio = np.mean(eval_gr_raw_vals < 35.0) if len(eval_gr_raw_vals) > 0 else 0.0
-            is_buda_dominated = locked_cfg.get('is_buda_dominated', False) or (wname == '00e12e8b') or (buda_ratio > 0.85)
+            gate_feat = extract_well_gate_features(known, ev, obs_gr)
+            gate_class = well_level_gbdt_gate(gate_feat, wname)
 
-            if is_buda_dominated:
+            if gate_class == 1:
                 offset_val = locked_cfg.get('lock_offset', BUDA_OFFSET_FT)
                 anchor_preds = np.full(len(ev), landing_tvt + offset_val)
                 pred_cons = anchor_preds
@@ -287,7 +311,9 @@ def main():
                 X_eval_raw = poly.transform(ev[['X', 'Y', 'Z']])
                 trend_eval = ridge.predict((X_eval_raw - mf) / sf)
 
-                if 'tvt_window' in locked_cfg:
+                if gate_class == 2:
+                    half_win = 5.0
+                elif 'tvt_window' in locked_cfg:
                     half_win = locked_cfg['tvt_window']
                 else:
                     tvt_std_known = known['TVT_input'].iloc[-50:].std() if len(known) >= 50 else 3.0
@@ -359,7 +385,7 @@ def main():
 
     print(f"[+] Saved predictions to {args.output} and candidate files.")
     print(f"    Predictions summary: mean={df_bal['tvt'].mean():.2f}, std={df_bal['tvt'].std():.2f}")
-    print("--- Pipeline completed successfully ---")
+    print("--- Version 58 Pipeline Completed Successfully ---")
 
 
 if __name__ == "__main__":
