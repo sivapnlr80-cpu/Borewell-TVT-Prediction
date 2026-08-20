@@ -1,0 +1,19 @@
+{
+  "id": "sivapnlr80/rsna-knee-t4-solution",
+  "title": "RSNA Knee T4 Solution",
+  "code_file": "rsna_knee_v8_multimodal.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "false",
+  "enable_tpu": "true",
+  "enable_internet": "true",
+  "dataset_sources": [
+    "girishbose/dinov2-vits14-rsna-knee",
+    "pytorch/resnet18"
+  ],
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ],
+  "kernel_sources": []
+}

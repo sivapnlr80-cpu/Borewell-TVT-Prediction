@@ -1,0 +1,19 @@
+# Exclude PyTorch model checkpoints and large log directories
+*.pth
+*.pt
+*.bin
+*.safetensors
+
+# Exclude heavy output and log directories
+output_dir/
+v*_output/
+v10_output/
+v11_output/
+v6_output/
+v7_output/
+v8_output/
+kaggle_*_log/
+kaggle_*_output/
+latest_log/
+__pycache__/
+.ipynb_checkpoints/
