@@ -17,3 +17,5 @@ kaggle_*_output/
 latest_log/
 __pycache__/
 .ipynb_checkpoints/
+test_bootstrap_run/
+

@@ -1,7 +1,7 @@
 {
   "id": "sivapnlr80/rsna-knee-t4-solution",
   "title": "RSNA Knee T4 Solution",
-  "code_file": "rsna_knee_v8_multimodal.ipynb",
+  "code_file": "rsna-knee-abnormality-detection-kaggle-submission-fixed-v7.ipynb",
   "language": "python",
   "kernel_type": "notebook",
   "is_private": "true",
